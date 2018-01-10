@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 /**
  * 有一个target list of String, 一个available list of String, 找出available list里最小连续的区间，使得targetlist里的所有词都在这个区间里，无顺序要求。
  *
@@ -12,77 +10,84 @@ import java.util.HashMap;
  * [0, 2]
  *
  */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 class _12 {
 	public static void main(String[] args) {
 		_12 s = new _12();
-		String[] source = {"a", "b", "c", "d"};
-		String[] target = {"b", "d"};
-
-		System.out.println(s.range(source, target)[0]);
-		System.out.println(s.range(source, target)[1]);
+		String[] source = {"the", "spain", "that", "the", "rain", "in","spain", "stays", "forcast", "int", "the"};
+		String[] target = {"in","the", "spain"};
+		String[] source1 = {"abc", "2abc", "cab", "bcd", "bcd"};
+		String[] target1 = {"2abc","bcd", "cab"};
+		List<String> targetList = Arrays.asList(target);
+		List<String> sourceList = Arrays.asList(source);
+		System.out.println(s.subSequenceTags(targetList, sourceList).get(0));
+		System.out.println(s.subSequenceTags(targetList, sourceList).get(1));
 	}
 
-	public int[] range(String[] source, String[] target) {
-		int[] result = new int[2];
+	public List<Integer> subSequenceTags(List<String> targetList, List<String> availableTagList) {
+		List<Integer> ans = new ArrayList<>();
 
-		if (target.length > source.length) {
-			result[0] = -1;
-			result[1] = -1;
-			return result;
+		if (targetList.size() > availableTagList.size()) {
+			ans.add(0);
+			return ans;
 		}
 
-		HashMap<String, Integer> sourceHash = new HashMap<>();
 		HashMap<String, Integer> targetHash = new HashMap<>();
 
-		for (String str : target) {
-			if (!targetHash.containsKey(str)) {
-				targetHash.put(str, 1);
-			} else {
-				targetHash.put(str, targetHash.get(str) + 1);
-			}
+		for (String tag : targetList) {
+			String str = tag.toLowerCase();
+			targetHash.put(str, targetHash.getOrDefault(str, 0) + 1);
 		}
 
-		int j = 0;
+		int start = 0;
+		int end = 0;
+		int ansStart = 0;
+		int ansEnd = availableTagList.size() - 1;
 		int min = Integer.MAX_VALUE;
+		int count = targetList.size();
+		boolean found = false;
 
-		for (int i = 0; i < source.length; i++) {
-			while (!valid(sourceHash, targetHash) && j < source.length) {
-				String str = source[j];
+		for (start = 0; start < ansEnd; start++) {
+			while (count > 0 && end < availableTagList.size()) {
+				String str = availableTagList.get(end).toLowerCase();
 
-				if (sourceHash.containsKey(str)) {
-					sourceHash.put(str, sourceHash.get(str) + 1);
-				} else {
-					sourceHash.put(str, 1);
+				targetHash.put(str, targetHash.getOrDefault(str, 0) - 1);
+				if (targetHash.get(str) >= 0) {
+					count--;
 				}
-				j++;
+				end++;
 			}
 
-			if (valid(sourceHash, targetHash)) {
-				if (min > j - i) {
-					min = j - i;
-					result[0] = i;
-					result[1] = j - 1;
+			if (count == 0) {
+				found = true;
+				if (min > end - start) {
+					min = end - start;
+					ansStart = start;
+					ansEnd = end - 1;
 				}
-			}
 
-			sourceHash.put(source[i], sourceHash.get(source[i]) - 1);
-		}
+				String cur = availableTagList.get(start).toLowerCase();
 
-		return result;
-	}
+				targetHash.put(cur, targetHash.get(cur) + 1);
 
-	private boolean valid(HashMap<String, Integer> sourceHash, HashMap<String, Integer> targetHash) {
-		for (String str : targetHash.keySet()) {
-			if (!sourceHash.containsKey(str)) {
-				return false;
-			} else {
-				if (targetHash.get(str) > sourceHash.get(str)) {
-					return false;
+				if (targetHash.get(cur) > 0) {
+					count++;
 				}
 			}
 		}
 
-		return true;
+		if (!found) {
+			ans.add(0);
+			return ans;
+		}
+
+		ans.add(ansStart);
+		ans.add(ansEnd);
+
+		return ans;
 	}
 }
