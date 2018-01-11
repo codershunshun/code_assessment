@@ -1,6 +1,6 @@
 /**
  * Johns play a game in which he throws a baseball at various blocks marked with a symbol so as to knock these out.
- * A score is computed for each throw. The 'last score' is the score of the previous throw (or 0 if there is no previous throw) 
+ * A score is computed for each throw. The 'last score' is the score of the previous throw (or 0 if there is no previous throw)
  * and the total score is the sum of the scores of all the throws.
  * The symbol on a block can be an integer, a sign or a letter. Each sign or letter represents a special rule as given below.
  *
@@ -31,91 +31,13 @@
 import java.util.Stack;
 
 class _3 {
-//	class Solution_1 {
-//		private int auxBeforeCurrentStore = 0;
-//		private int beforeCurrentScore = 0;
-//		private int totalScore = 0;
-//		private int currentScore = 0;
-//
 	public static void main(String arg[]) {
 		_3 obj = new _3();
 		String[] blocks = {"5", "-2", "4", "Z", "X", "9", "+", "+"};
 
 		System.out.println(obj.totalScore(blocks));
 	}
-//
-//		public int totalScore(String[] blocks) {
-//			for (int i = 0; i < blocks.length; i++) {
-//				if (isInteger(blocks[i])) {
-//					continue;
-//				}
-//
-//				if (isX(blocks[i])) {
-//					continue;
-//				}
-//
-//				if (isPlus(blocks[i])) {
-//					continue;
-//				}
-//
-//				if (isZ(blocks[i])) {
-//					continue;
-//				}
-//			}
-//			return totalScore;
-//		}
-//
-//		private boolean isInteger(String block) {
-//			try {
-//				int auxCurrentScore = Integer.parseInt(block);
-//				auxBeforeCurrentStore = beforeCurrentScore;
-//				beforeCurrentScore = currentScore;
-//				currentScore = auxCurrentScore;
-//				totalScore = totalScore + currentScore;
-//				return true;
-//			} catch (Exception ex) {
-//				return false;
-//			}
-//		}
-//
-//		private boolean isX(String block) {
-//			if (block.equals("X")) {
-//				auxBeforeCurrentStore = beforeCurrentScore;
-//				beforeCurrentScore = currentScore;
-//				currentScore = 2 * currentScore;
-//				totalScore = totalScore + currentScore;
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//
-//		private boolean isPlus(String block) {
-//			if (block.equals("+")) {
-//				auxBeforeCurrentStore = beforeCurrentScore;
-//				int auxCurrentScore = currentScore;
-//				currentScore = currentScore + beforeCurrentScore;
-//				beforeCurrentScore = auxCurrentScore;
-//				totalScore = totalScore + currentScore;
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//
-//		private boolean isZ(String block) {
-//			if (block.equals("Z")) {
-//				totalScore = totalScore - currentScore;
-//				currentScore = beforeCurrentScore;
-//				beforeCurrentScore = auxBeforeCurrentStore;
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//	}
-	
-	//Use Stack
+
 	private int currentScore = 0;
 
 	private boolean isInteger(String block) {
@@ -126,29 +48,30 @@ class _3 {
 			return false;
 		}
 	}
+
 	public int totalScore(String[] blocks) {
 		if (blocks == null || blocks.length == 0) {
 			return 0;
 		}
-		
+
 		if (blocks.length == 1 && !isInteger(blocks[0])) {
 			return 0;
 		}
-		
+
 		Stack<Integer> stack = new Stack<Integer>();
 		int i = 0;
-		
+
 		while (i < blocks.length) {
 			String current = blocks[i];
-			
+
 			if (isInteger(current)) {
 				stack.push(currentScore);
 			}
-			
+
 			if (current.equals("Z")) {
 				stack.pop();
 			}
-			
+
 			if (current.equals("X")) {
 				if (stack.peek() == null) {
 					stack.push(0);
@@ -156,24 +79,24 @@ class _3 {
 					stack.push(2 * stack.peek());
 				}
 			}
-			
+
 			if (current.equals("+") ) {
 				int score1 = stack.peek() != null ? stack.pop() : 0;
 				int score2 = stack.peek() != null ? stack.pop() : 0;
-				
+
 				stack.push(score2);
 				stack.push(score1);
 				stack.push(score1 + score2);
 			}
 			i++;
 		}
-		
+
 		int sum = 0;
-		
+
 		while (!stack.isEmpty()) {
 			sum += stack.pop();
 		}
-		
+
 		return sum;
 	}
 }

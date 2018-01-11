@@ -27,10 +27,15 @@
  *
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class _2 {
-    public List<Integer> findAnagrams(String s, String p) {
+	public static void main(String[] args) {
+		System.out.println(findAnagrams("zzddabab", "ab"));
+	}
+
+    public static List<Integer> findAnagrams(String s, String p) {
         List<Integer> ans = new ArrayList<Integer>();
         int[] hash = new int[26];
 
